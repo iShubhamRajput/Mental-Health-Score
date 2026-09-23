@@ -17,7 +17,7 @@ const apiEndpointLabel = document.querySelector("#apiEndpointLabel");
 
 const configuredApiBase = document.querySelector("meta[name='api-base-url']")?.content.trim();
 const isFastApiOrigin = window.location.port === "8000";
-const API_BASE = configuredApiBase || (isFastApiOrigin ? "" : "http://127.0.0.1:8000");
+const API_BASE = configuredApiBase || (isFastApiOrigin ? "" : "https://mental-health-score-j3nj.onrender.com");
 const PREDICT_URL = `${API_BASE}/predict`;
 
 apiEndpointLabel.textContent = PREDICT_URL;
