@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="api-base-url" content="">
+    <title>Mental Health Score Predictor</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <main class="app-shell">
+        <section class="intro">
+            <div class="intro-copy">
+                <p class="eyebrow">Machine Learning Health Tool</p>
+                <h1>Mental Health Score Predictor</h1>
+                <p class="intro-text">
+                    Enter student lifestyle, academic, and social media usage details to estimate a mental health score using your trained ML model.
+                </p>
+            </div>
+            <div class="status-panel" aria-label="API status">
+                <span class="status-dot"></span>
+                <span>FastAPI model endpoint</span>
+                <strong id="apiEndpointLabel">/predict</strong>
+            </div>
+        </section>
+
+        <section class="workspace" aria-label="Prediction workspace">
+            <form id="predictionForm" class="predictor-form" novalidate>
+                <div class="form-heading">
+                    <div>
+                        <p class="section-kicker">Student Data</p>
+                        <h2>Prediction Inputs</h2>
+                    </div>
+                    <button class="ghost-button" type="button" id="fillExample">Fill Example</button>
+                </div>
+
+                <div class="field-grid">
+                    <label class="field">
+                        <span>Age</span>
+                        <input type="number" name="age" min="1" max="99" step="1" placeholder="21" required>
+                    </label>
+
+                    <label class="field">
+                        <span>Gender</span>
+                        <select name="gender" required>
+                            <option value="">Select gender</option>
+                            <option>Male</option>
+                            <option>Female</option>
+                        </select>
+                    </label>
+
+                    <label class="field">
+                        <span>Country</span>
+                        <input type="text" name="country" placeholder="India" required>
+                    </label>
+
+                    <label class="field">
+                        <span>Academic Level</span>
+                        <select name="academic_level" required>
+                            <option value="">Select level</option>
+                            <option>High School</option>
+                            <option>Undergraduate</option>
+                            <option>Graduate</option>
+                        </select>
+                    </label>
+
+                    <label class="field">
+                        <span>Most Used Platform</span>
+                        <select name="most_used_platform" required>
+                            <option value="">Select platform</option>
+                            <option>Facebook</option>
+                            <option>LinkedIn</option>
+                            <option>Instagram</option>
+                            <option>Snapchat</option>
+                            <option>Twitter</option>
+                            <option>YouTube</option>
+                            <option>TikTok</option>
+                            <option>LINE</option>
+                            <option>KakaoTalk</option>
+                            <option>VKontakte</option>
+                            <option>WhatsApp</option>
+                            <option>WeChat</option>
+                        </select>
+                    </label>
+
+                    <label class="field">
+                        <span>Purpose Of Use</span>
+                        <select name="purpose_of_use" required>
+                            <option value="">Select purpose</option>
+                            <option>Networking</option>
+                            <option>Education</option>
+                            <option>Entertainment</option>
+                            <option>News</option>
+                        </select>
+                    </label>
+
+                    <label class="field">
+                        <span>Average Daily Usage Hours</span>
+                        <input type="number" name="average_daily_usage_hours" min="0.1" max="23.9" step="0.1" placeholder="5.0" required>
+                    </label>
+
+                    <label class="field">
+                        <span>Daily Unlocks</span>
+                        <input type="number" name="daily_unlocks" min="1" step="1" placeholder="120" required>
+                    </label>
+
+                    <label class="field">
+                        <span>Study Hours</span>
+                        <input type="number" name="study_hours" min="0.1" max="23.9" step="0.1" placeholder="3.0" required>
+                    </label>
+
+                    <label class="field">
+                        <span>Physical Activity Hours</span>
+                        <input type="number" name="physical_activity_hours" min="0.1" max="23.9" step="0.1" placeholder="1.0" required>
+                    </label>
+
+                    <label class="field">
+                        <span>Sleep Hours Per Night</span>
+                        <input type="number" name="sleep_hours_per_night" min="0.1" max="23.9" step="0.1" placeholder="7.0" required>
+                    </label>
+
+                    <label class="field">
+                        <span>Stress Level</span>
+                        <select name="stress_level" required>
+                            <option value="">Select stress level</option>
+                            <option>Low</option>
+                            <option>Medium</option>
+                            <option>High</option>
+                            <option>Very High</option>
+                        </select>
+                    </label>
+                </div>
+
+                <div class="form-actions">
+                    <button class="primary-button" type="submit" id="submitButton">
+                        <span class="button-text">Predict Score</span>
+                        <span class="button-loader" aria-hidden="true"></span>
+                    </button>
+                    <button class="secondary-button" type="reset">Clear</button>
+                </div>
+            </form>
+
+            <aside class="result-card" id="resultCard" aria-live="polite">
+                <div class="result-empty" id="emptyState">
+                    <div class="pulse-ring"></div>
+                    <h2>Ready to predict</h2>
+                    <p>Your predicted mental health score will appear here after submitting the form.</p>
+                </div>
+
+                <div class="result-loading hidden" id="loadingState">
+                    <div class="spinner"></div>
+                    <h2>Analyzing inputs</h2>
+                    <p>The model is processing the student data.</p>
+                </div>
+
+                <div class="result-success hidden" id="successState">
+                    <p class="section-kicker">Predicted Score</p>
+                    <div class="score-wrap">
+                        <span id="scoreValue">0.00</span>
+                        <small>/ 10</small>
+                    </div>
+                    <div class="meter">
+                        <span id="scoreMeter"></span>
+                    </div>
+                    <p id="scoreMessage" class="score-message"></p>
+                </div>
+
+                <div class="result-error hidden" id="errorState">
+                    <h2>Unable to predict</h2>
+                    <p id="errorMessage"></p>
+                </div>
+            </aside>
+        </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
